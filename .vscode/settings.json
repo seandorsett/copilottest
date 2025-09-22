@@ -1,7 +1,7 @@
 {
     "github.copilot.chat.commitMessageGeneration.instructions": [
         {
-        "text": "You are an expert at writing concise and clear git commit messages. Given a set of code changes, generate a single concise commit message that accurately describes the changes. Use the imperative mood and be specific about what was changed and why. Avoid generic messages like 'Update code' or 'Fix bug'. If multiple unrelated changes are present, summarize them in a single message. Ensure the message is no longer than 50 characters. Be extremely detailed with the file changes and the reason for the changes."
+        "text": "Be extremely detailed with the files changes and the reason for the change. Add lots of emojis.",
     }
 ],
 }
