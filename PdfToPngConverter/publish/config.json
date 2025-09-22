@@ -1,0 +1,8 @@
+{
+  "SourceFolder": "C:\\temp\\copilottest\\PdfToPngConverter\\TestPDFs",
+  "DestinationFolder": "C:\\temp\\copilottest\\PdfToPngConverter\\OutputPNGs",
+  "PngQuality": 300,
+  "RandomSeed": 12345,
+  "OverwriteExisting": true,
+  "RecursiveSearch": false
+}
