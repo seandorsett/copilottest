@@ -6,6 +6,16 @@ function subtract(x: number, y: number): number {
     return x - y;
 }
 
+// User type enum for different user privileges
+type UserType = 'member' | 'administrator';
+
+// User interface for the user management system
+interface User {
+    id: string;
+    name: string;
+    userType: UserType;
+}
+
 // Book interface for the favorites system
 interface Book {
     id: string;
@@ -107,7 +117,7 @@ class FavoritesManager {
     }
 }
 
-export { add, subtract, Book, FavoritesManager };
+export { add, subtract, Book, User, UserType, FavoritesManager };
 export default { add, subtract, FavoritesManager };
 
 // IGNORE

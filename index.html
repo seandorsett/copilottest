@@ -98,10 +98,48 @@
             border-radius: 12px;
             font-size: 0.9em;
         }
+
+        .user-header {
+            background-color: #f0f0f0;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .user-type-badge {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .user-type-member {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .user-type-administrator {
+            background-color: #FF9800;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <h1>📚 Books Favorites Manager</h1>
+    
+    <div class="user-header" id="user-header">
+        <span class="user-name" id="user-name">Loading...</span>
+        <span class="user-type-badge" id="user-type-badge">Loading...</span>
+    </div>
     
     <div class="container">
         <h2 class="section-title">Available Books</h2>
@@ -117,6 +155,15 @@
     </div>
 
     <script type="module">
+        // User class implementation
+        class User {
+            constructor(id, name, userType) {
+                this.id = id;
+                this.name = name;
+                this.userType = userType; // 'member' or 'administrator'
+            }
+        }
+
         // Book interface implementation
         class Book {
             constructor(id, title, author, isbn = null, publishedYear = null) {
@@ -185,10 +232,30 @@
             new Book('6', 'Harry Potter and the Philosopher\'s Stone', 'J.K. Rowling', '978-0-7475-3269-9', 1997)
         ];
 
+        // Sample users with different types
+        const sampleUsers = [
+            new User('1', 'Alice Johnson', 'member'),
+            new User('2', 'Bob Smith', 'administrator'),
+            new User('3', 'Carol Wilson', 'member'),
+            new User('4', 'David Brown', 'administrator')
+        ];
+
+        // Current user (simulate different user logins)
+        let currentUser = sampleUsers[Math.floor(Math.random() * sampleUsers.length)];
+
         // Initialize favorites manager
         const favoritesManager = new FavoritesManager();
 
         // Render functions
+        function renderUserHeader() {
+            const userNameElement = document.getElementById('user-name');
+            const userTypeElement = document.getElementById('user-type-badge');
+            
+            userNameElement.textContent = currentUser.name;
+            userTypeElement.textContent = currentUser.userType;
+            userTypeElement.className = `user-type-badge user-type-${currentUser.userType}`;
+        }
+
         function renderAvailableBooks() {
             const container = document.getElementById('available-books');
             container.innerHTML = '';
@@ -272,6 +339,7 @@
         };
 
         // Initial render
+        renderUserHeader();
         renderAvailableBooks();
         renderFavorites();
     </script>
