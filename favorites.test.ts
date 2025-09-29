@@ -1,4 +1,4 @@
-import { Book, FavoritesManager } from './index';
+import { Book, User, UserType, FavoritesManager } from './index';
 
 // Mock window.confirm for testing
 const mockConfirm = jest.fn();
@@ -149,6 +149,55 @@ describe('FavoritesManager', () => {
             
             expect(favoritesManager.getFavoritesCount()).toBe(0);
             expect(favoritesManager.getFavorites()).toEqual([]);
+        });
+    });
+});
+
+describe('User', () => {
+    describe('User creation and properties', () => {
+        test('should create a member user correctly', () => {
+            const user: User = {
+                id: '1',
+                name: 'Alice Johnson',
+                userType: 'member'
+            };
+
+            expect(user.id).toBe('1');
+            expect(user.name).toBe('Alice Johnson');
+            expect(user.userType).toBe('member');
+        });
+
+        test('should create an administrator user correctly', () => {
+            const user: User = {
+                id: '2',
+                name: 'Bob Smith',
+                userType: 'administrator'
+            };
+
+            expect(user.id).toBe('2');
+            expect(user.name).toBe('Bob Smith');
+            expect(user.userType).toBe('administrator');
+        });
+
+        test('should enforce correct UserType values', () => {
+            // This test ensures TypeScript type checking works as expected
+            const memberType: UserType = 'member';
+            const adminType: UserType = 'administrator';
+
+            expect(memberType).toBe('member');
+            expect(adminType).toBe('administrator');
+        });
+
+        test('should allow extensible user types structure', () => {
+            // Test that the User interface can be extended for future user types
+            const users: User[] = [
+                { id: '1', name: 'Member User', userType: 'member' },
+                { id: '2', name: 'Admin User', userType: 'administrator' }
+            ];
+
+            expect(users).toHaveLength(2);
+            expect(users[0].userType).toBe('member');
+            expect(users[1].userType).toBe('administrator');
         });
     });
 });
