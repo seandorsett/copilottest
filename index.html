@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books Favorites Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .book-item {
+            background-color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .book-info {
+            flex-grow: 1;
+        }
+
+        .book-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .book-author {
+            color: #666;
+            font-style: italic;
+        }
+
+        .book-details {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .add-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .remove-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .remove-btn:hover {
+            background-color: #da190b;
+        }
+
+        .add-btn:hover {
+            background-color: #45a049;
+        }
+
+        .section-title {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+
+        .empty-message {
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .favorites-count {
+            background-color: #4CAF50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>📚 Books Favorites Manager</h1>
+    
+    <div class="container">
+        <h2 class="section-title">Available Books</h2>
+        <div id="available-books"></div>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">
+            My Favorites 
+            <span class="favorites-count" id="favorites-count">0</span>
+        </h2>
+        <div id="favorites-list"></div>
+    </div>
+
+    <script type="module">
+        // Book interface implementation
+        class Book {
+            constructor(id, title, author, isbn = null, publishedYear = null) {
+                this.id = id;
+                this.title = title;
+                this.author = author;
+                this.isbn = isbn;
+                this.publishedYear = publishedYear;
+            }
+        }
+
+        // FavoritesManager implementation (simplified for demo)
+        class FavoritesManager {
+            constructor() {
+                this.favorites = [];
+            }
+
+            addToFavorites(book) {
+                if (this.favorites.some(fav => fav.id === book.id)) {
+                    return false;
+                }
+                this.favorites.push(book);
+                return true;
+            }
+
+            async removeFromFavorites(bookId, showConfirmation = true) {
+                const bookIndex = this.favorites.findIndex(book => book.id === bookId);
+                
+                if (bookIndex === -1) {
+                    return false;
+                }
+
+                const book = this.favorites[bookIndex];
+
+                if (showConfirmation) {
+                    const confirmed = confirm(`Are you sure you want to remove "${book.title}" by ${book.author} from your favorites?`);
+                    if (!confirmed) {
+                        return false;
+                    }
+                }
+
+                this.favorites.splice(bookIndex, 1);
+                return true;
+            }
+
+            getFavorites() {
+                return [...this.favorites];
+            }
+
+            isFavorite(bookId) {
+                return this.favorites.some(book => book.id === bookId);
+            }
+
+            getFavoritesCount() {
+                return this.favorites.length;
+            }
+        }
+
+        // Sample books data
+        const sampleBooks = [
+            new Book('1', 'The Great Gatsby', 'F. Scott Fitzgerald', '978-0-7432-7356-5', 1925),
+            new Book('2', 'To Kill a Mockingbird', 'Harper Lee', '978-0-06-112008-4', 1960),
+            new Book('3', '1984', 'George Orwell', '978-0-452-28423-4', 1949),
+            new Book('4', 'Pride and Prejudice', 'Jane Austen', '978-0-14-143951-8', 1813),
+            new Book('5', 'The Catcher in the Rye', 'J.D. Salinger', '978-0-316-76948-0', 1951),
+            new Book('6', 'Harry Potter and the Philosopher\'s Stone', 'J.K. Rowling', '978-0-7475-3269-9', 1997)
+        ];
+
+        // Initialize favorites manager
+        const favoritesManager = new FavoritesManager();
+
+        // Render functions
+        function renderAvailableBooks() {
+            const container = document.getElementById('available-books');
+            container.innerHTML = '';
+
+            sampleBooks.forEach(book => {
+                const bookElement = document.createElement('div');
+                bookElement.className = 'book-item';
+                
+                const isFav = favoritesManager.isFavorite(book.id);
+                
+                bookElement.innerHTML = `
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">by ${book.author}</div>
+                        <div class="book-details">
+                            ${book.isbn ? `ISBN: ${book.isbn}` : ''} 
+                            ${book.publishedYear ? `(${book.publishedYear})` : ''}
+                        </div>
+                    </div>
+                    <button class="add-btn" 
+                            onclick="addToFavorites('${book.id}')" 
+                            ${isFav ? 'disabled' : ''}>
+                        ${isFav ? '✓ In Favorites' : '+ Add to Favorites'}
+                    </button>
+                `;
+                
+                container.appendChild(bookElement);
+            });
+        }
+
+        function renderFavorites() {
+            const container = document.getElementById('favorites-list');
+            const countElement = document.getElementById('favorites-count');
+            const favorites = favoritesManager.getFavorites();
+            
+            countElement.textContent = favorites.length;
+            container.innerHTML = '';
+
+            if (favorites.length === 0) {
+                container.innerHTML = '<div class="empty-message">No favorite books yet. Add some from the list above!</div>';
+                return;
+            }
+
+            favorites.forEach(book => {
+                const bookElement = document.createElement('div');
+                bookElement.className = 'book-item';
+                
+                bookElement.innerHTML = `
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">by ${book.author}</div>
+                        <div class="book-details">
+                            ${book.isbn ? `ISBN: ${book.isbn}` : ''} 
+                            ${book.publishedYear ? `(${book.publishedYear})` : ''}
+                        </div>
+                    </div>
+                    <button class="remove-btn" onclick="removeFromFavorites('${book.id}')">
+                        🗑️ Remove from Favorites
+                    </button>
+                `;
+                
+                container.appendChild(bookElement);
+            });
+        }
+
+        // Event handlers
+        window.addToFavorites = function(bookId) {
+            const book = sampleBooks.find(b => b.id === bookId);
+            if (book && favoritesManager.addToFavorites(book)) {
+                renderAvailableBooks();
+                renderFavorites();
+            }
+        };
+
+        window.removeFromFavorites = async function(bookId) {
+            const removed = await favoritesManager.removeFromFavorites(bookId, true);
+            if (removed) {
+                renderAvailableBooks();
+                renderFavorites();
+            }
+        };
+
+        // Initial render
+        renderAvailableBooks();
+        renderFavorites();
+    </script>
+</body>
+</html>
